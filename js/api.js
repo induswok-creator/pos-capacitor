@@ -12,7 +12,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzsiF9u9_cL2UprmWnVI5CM
 
 const ACTION_MAP = {
   // Reads
-  GET_MENU:           { table: 'menu',         type: 'read',  index: 'isActive', value: 1 },
+  GET_MENU: { table: 'menu', type: 'read', index: 'isActive', value: true },
   GET_CATEGORIES:     { table: 'categories',   type: 'read' },
   GET_ORDERS:         { table: 'orders',        type: 'read',  orderBy: 'createdAt', reverse: true },
   GET_KOTS:           { table: 'kots',          type: 'read',  orderBy: 'createdAt', reverse: true },

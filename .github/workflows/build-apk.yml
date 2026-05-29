@@ -17,13 +17,24 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Clean old Android build
+        run: |
+          rm -rf android
+          rm -f local.properties
 
       - name: Fix capacitor config
         run: |
-          sed -i 's/"webDir": "."/"webDir": "dist"/g' capacitor.config.json || true
-          sed -i 's/"bundledWebRuntime".*//g' capacitor.config.json || true
+          cat > capacitor.config.json << 'EOF'
+          {
+            "appId": "io.github.noamaan.pos",
+            "appName": "Indus Wok POS",
+            "webDir": "dist",
+            "android": {
+              "allowMixedContent": true,
+              "backgroundColor": "#c0392b"
+            }
+          }
+          EOF
 
       - name: Prepare dist folder
         run: |
@@ -32,7 +43,10 @@ jobs:
           cp -r css dist/
           cp -r js dist/
 
-      - name: Add Android platform
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add Android platform fresh
         run: npx cap add android
 
       - name: Sync Capacitor

@@ -17,7 +17,7 @@ async function loadCustomers() {
   customersCache = res.customers || [];
 }
 
-function renderCustomers() {
+export function renderCustomers() {
   const filter = document.getElementById('customerPlatformFilter')?.value || 'All';
   const q = (document.getElementById('customerSearchBox')?.value || '').toLowerCase();
   let list = filter === 'All' ? customersCache : customersCache.filter(c => c.platform === filter);

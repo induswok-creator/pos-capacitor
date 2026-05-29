@@ -147,15 +147,15 @@ function generateLocalId(prefix) {
 
 async function fetchGas(action, payload) {
   try {
-    const body = JSON.stringify({ action, ...payload });
-    const resp = await fetch(GAS_URL, { method: 'POST', body, headers:{'Content-Type':'text/plain'} });
+    // Change method to GET and append the action/payload to the URL
+    const url = `${GAS_URL}?action=${action}&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+    const resp = await fetch(url, { method: 'GET' }); 
     const text = await resp.text();
     try { return JSON.parse(text); } catch { return { success:false, message:text }; }
   } catch (err) {
     return { success:false, message: err.message };
   }
 }
-
 async function cacheCloudResponse(meta, cloud) {
   if (!cloud.success) return;
   const data = cloud[meta.table] || cloud.data || cloud;

@@ -18,7 +18,7 @@ async function loadTables() {
   tablesCache = res.tables || [];
 }
 
-function renderTables() {
+export function renderTables() {
   const grid = document.getElementById('tablesGrid');
   if (!grid) return;
   const areaFilter = document.getElementById('tableAreaFilter')?.value || 'All';

@@ -33,7 +33,7 @@ async function loadMenu() {
   ordersCache = (await api('GET_ORDERS')).orders || [];
 }
 
-function renderMenu() {
+export function renderMenu() {
   const grid = document.getElementById('menuGrid');
   if (!grid) return;
   const filter = document.getElementById('menuFilter')?.value || 'All';

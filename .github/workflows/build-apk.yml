@@ -18,7 +18,12 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Fix capacitor config
+        run: |
+          sed -i 's/"webDir": "."/"webDir": "dist"/g' capacitor.config.json || true
+          sed -i 's/"bundledWebRuntime".*//g' capacitor.config.json || true
 
       - name: Prepare dist folder
         run: |

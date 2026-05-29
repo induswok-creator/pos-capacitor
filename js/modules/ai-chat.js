@@ -6,7 +6,7 @@ import { Network } from '@capacitor/network';
 import { escHtml, toast } from '../utils.js';
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY';
+const GEMINI_API_KEY = 'AIzaSyBKZFSG2_2CuKgPNvfg5jrzV3Gr5n7j_dU';
 
 export function onTabFocus() {
   const container = document.getElementById('chatMessages');

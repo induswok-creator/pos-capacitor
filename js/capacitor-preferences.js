@@ -1,25 +1,39 @@
 /**
- * Web shim for @capacitor/preferences
- * Uses localStorage as backend
+ * Web shim for @capacitor/network
+ * Uses navigator.onLine + browser events
  */
 
-export const Preferences = {
-  async get({ key }) {
-    const value = localStorage.getItem(key);
-    return { value };
+const listeners = new Map();
+
+export const Network = {
+  async getStatus() {
+    return { connected: navigator.onLine, connectionType: navigator.onLine ? 'wifi' : 'none' };
   },
-  async set({ key, value }) {
-    localStorage.setItem(key, value);
+
+  addListener(eventName, callback) {
+    if (eventName === 'networkStatusChange') {
+      const online = () => callback({ connected: true, connectionType: 'wifi' });
+      const offline = () => callback({ connected: false, connectionType: 'none' });
+      window.addEventListener('online', online);
+      window.addEventListener('offline', offline);
+      const id = Symbol(eventName);
+      listeners.set(id, { online, offline, callback });
+      return Promise.resolve({ remove: async () => {
+        window.removeEventListener('online', online);
+        window.removeEventListener('offline', offline);
+        listeners.delete(id);
+      }});
+    }
+    return Promise.resolve({ remove: async () => {} });
   },
-  async remove({ key }) {
-    localStorage.removeItem(key);
-  },
-  async clear() {
-    localStorage.clear();
-  },
-  async keys() {
-    return { keys: Object.keys(localStorage) };
+
+  removeAllListeners() {
+    for (const [, handlers] of listeners) {
+      window.removeEventListener('online', handlers.online);
+      window.removeEventListener('offline', handlers.offline);
+    }
+    listeners.clear();
   }
 };
 
-export default Preferences;
+export default Network;

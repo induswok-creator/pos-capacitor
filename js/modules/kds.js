@@ -15,7 +15,7 @@ export function onTabBlur() {
   if (window._kdsInterval) { clearInterval(window._kdsInterval); window._kdsInterval = null; }
 }
 
-async function renderKDS() {
+export async function renderKDS() {
   const grid = document.getElementById('kdsGrid');
   if (!grid) return;
   const station = document.getElementById('kdsStationFilter')?.value || 'All';

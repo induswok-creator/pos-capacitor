@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="theme-color" content="#c0392b">
+<title>The Flavours of Indus Wok — POS v5.0 Ultimate</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/modules.css">
+<link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>The Flavours of Indus Wok</h1>
+    <div class="tagline">Pan-Asian Restaurant</div>
+    <div class="sub">POS v5.0 • Powered by Capacitor + IndexedDB</div>
+    <div class="login-username-wrap">
+      <input id="loginUsername" placeholder="Username" autocomplete="off" autocapitalize="none">
+    </div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad" id="pinPad">
+      <button class="pin-key" data-key="1">1</button>
+      <button class="pin-key" data-key="2">2</button>
+      <button class="pin-key" data-key="3">3</button>
+      <button class="pin-key" data-key="4">4</button>
+      <button class="pin-key" data-key="5">5</button>
+      <button class="pin-key" data-key="6">6</button>
+      <button class="pin-key" data-key="7">7</button>
+      <button class="pin-key" data-key="8">8</button>
+      <button class="pin-key" data-key="9">9</button>
+      <button class="pin-key clear" data-key="clear">⌫</button>
+      <button class="pin-key" data-key="0">0</button>
+      <button class="pin-key login-btn" data-key="login">→</button>
+    </div>
+    <div class="login-error" id="loginError"></div>
+  </div>
+  <div class="login-credit">Made by Noamaan Shaikh</div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div id="appShell" style="display:none;">
+
+  <!-- Top Bar -->
+  <div id="topBar">
+    <div class="brand">
+      <span style="font-size:20px;">W</span>
+      <span>Indus Wok</span>
+      <span class="ai-badge">⚡ Offline-First</span>
+    </div>
+    <div class="user-info">
+      <div id="networkBadge" style="padding:2px 8px;border-radius:10px;font-size:10px;background:#27ae60;">🌐 Online</div>
+      <div class="sync-indicator">
+        <div id="syncDot" class="sync-dot"></div>
+        <span id="syncText" style="font-size:10px;">Synced</span>
+      </div>
+      <span id="topBarUser" style="font-weight:600;">Guest</span>
+      <span id="topBarRole" class="role-badge">STAFF</span>
+      <button onclick="App.logout()">🚪 Exit</button>
+    </div>
+  </div>
+
+  <!-- Order Info Bar -->
+  <div id="orderInfoBar"></div>
+
+  <!-- Tab Bar -->
+  <div id="tabBar">
+    <button class="tab-btn active" data-tab="dashboard">📊 Dash</button>
+    <button class="tab-btn" data-tab="billing">🧾 Billing</button>
+    <button class="tab-btn" data-tab="kds">🍳 KDS</button>
+    <button class="tab-btn" data-tab="tables">🪑 Tables</button>
+    <button class="tab-btn" data-tab="inventory">📦 Stock</button>
+    <button class="tab-btn" data-tab="vendors">🚚 Vendors</button>
+    <button class="tab-btn" data-tab="sales">💰 Sales</button>
+    <button class="tab-btn" data-tab="expenses">💸 Expenses</button>
+    <button class="tab-btn" data-tab="staff">👥 Staff</button>
+    <button class="tab-btn" data-tab="tasks">📝 Tasks</button>
+    <button class="tab-btn" data-tab="content">💡 Content</button>
+    <button class="tab-btn" data-tab="customers">👤 Customers</button>
+    <button class="tab-btn" data-tab="ai-chat">🤖 AI</button>
+    <button class="tab-btn" data-tab="reports">📧 Reports</button>
+    <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+  </div>
+
+  <div id="mainContent">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="stat-grid" id="dashStats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="card"><h3>📊 7-Day Sales Chart</h3><div id="dashSalesChart" style="height:180px;background:#f8f9fa;border-radius:6px;display:flex;align-items:flex-end;justify-content:space-around;padding:10px;"></div></div>
+        <div class="card"><h3>💸 Today's Expense Split</h3><div id="expenseSplit" style="height:180px;background:#f8f9fa;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gray);">Loading...</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div class="card">
+          <h3>⚠️ Low Stock Alerts</h3>
+          <div id="lowStockAlerts" style="font-size:12px;">Loading...</div>
+        </div>
+        <div class="card">
+          <h3>🎯 Target Progress</h3>
+          <div id="targetProgress" style="font-size:12px;">Loading...</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h3>🤖 Gemini AI Insight</h3>
+        <div id="geminiInsightText" style="font-size:13px;color:var(--gray);">Loading AI predictions...</div>
+      </div>
+    </div>
+
+    <!-- ===== BILLING ===== -->
+    <div class="tab-content" id="tab-billing">
+      <div class="billing-layout">
+        <div>
+          <div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select id="menuFilter" onchange="Billing.renderMenu()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;">
+              <option value="All">All</option>
+            </select>
+            <input id="menuSearch" placeholder="Search menu..." oninput="Billing.renderMenu()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;flex:1;">
+          </div>
+          <div class="card">
+            <h3>🍽️ Menu <button class="btn btn-sm btn-outline" onclick="document.getElementById('addMenuItemModal').classList.add('active')">➕ Add Item</button></h3>
+            <div class="menu-grid" id="menuGrid">Loading...</div>
+          </div>
+          <div class="card">
+            <h3>📋 Recent Orders</h3>
+            <div class="table-wrap"><table><thead><tr><th>Order ID</th><th>Table</th><th>Total</th><th>Status</th><th>Type</th></tr></thead><tbody id="recentOrdersTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+          </div>
+          <div class="card">
+            <h3>📋 Past Bills <button class="btn btn-sm btn-outline" onclick="Billing.renderPastBills()">🔄 Refresh</button></h3>
+            <div class="table-wrap"><table><thead><tr><th>Bill #</th><th>Table</th><th>Total</th><th>Time</th><th>Action</th></tr></thead><tbody id="pastBillsTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">No past bills</td></tr></tbody></table></div>
+          </div>
+        </div>
+        <div class="cart-sidebar">
+          <h3>🛒 Cart <span id="cartCount" style="float:right;font-size:12px;color:var(--gray);">0 items</span></h3>
+          <div class="cart-items" id="cartItems">Select items from menu</div>
+          <div class="cart-summary">
+            <div class="line"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+            <div class="line"><span>CGST (2.5%)</span><span id="cartCGST">₹0</span></div>
+            <div class="line"><span>SGST (2.5%)</span><span id="cartSGST">₹0</span></div>
+            <div class="line"><span>Discount</span><span id="cartDiscount">₹0</span></div>
+            <div class="line total"><span>TOTAL</span><span id="cartTotal">₹0</span></div>
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin:8px 0;">
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('percent',5)">-5%</button>
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('percent',10)">-10%</button>
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('percent',15)">-15%</button>
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('percent',20)">-20%</button>
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('flat',50)">-₹50</button>
+            <button class="btn btn-sm btn-outline" onclick="Billing.setDiscount('flat',100)">-₹100</button>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <input id="discountInput" placeholder="Custom" style="flex:1;padding:6px;font-size:12px;border:2px solid #eee;border-radius:6px;">
+            <select id="discountType" style="padding:6px;font-size:12px;border:2px solid #eee;border-radius:6px;">
+              <option value="flat">₹ Flat</option>
+              <option value="percent">% Percent</option>
+            </select>
+            <button class="btn btn-sm btn-primary" onclick="Billing.applyCustomDiscount()">Apply</button>
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <input id="customerName" placeholder="Customer (type phone/name to auto-fill)" oninput="Billing.searchCustomerUI()" style="font-size:12px;padding:8px;">
+            <div id="customerSearchResults" style="max-height:120px;overflow:auto;background:#fff;border:1px solid #eee;border-radius:6px;display:none;"></div>
+            <input id="customerPhone" placeholder="Phone" style="font-size:12px;padding:8px;margin-top:4px;">
+            <div id="deliveryAddressGroup" style="display:none;margin-top:4px;">
+              <input id="deliveryAddress" placeholder="Delivery Address" style="font-size:12px;padding:8px;">
+            </div>
+            <div id="customerInfoBadge" style="font-size:10px;color:var(--green);margin-top:2px;"></div>
+          </div>
+          <div class="cart-actions">
+            <button class="btn btn-gold" onclick="Billing.sendKOT()">🖨️ KOT</button>
+            <button class="btn btn-blue" onclick="Billing.printBillNow()">🧾 Bill</button>
+            <button class="btn btn-danger" onclick="Billing.clearCart()">🗑️ Clear</button>
+            <button class="btn btn-green" onclick="Billing.showSettleModal()">✅ Settle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modifier Modal -->
+      <div class="modal-overlay" id="modifierModal">
+        <div class="modal">
+          <h3>Choose Modifiers</h3>
+          <button class="close-btn" onclick="Billing.closeModifierModal()">×</button>
+          <div id="modifierList" style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;"></div>
+          <button class="btn btn-primary" onclick="Billing.confirmModifier()">Confirm & Add</button>
+        </div>
+      </div>
+
+      <!-- Add Menu Item Modal -->
+      <div class="modal-overlay" id="addMenuItemModal">
+        <div class="modal">
+          <h3>✏️ Add Menu Item</h3>
+          <button class="close-btn" onclick="closeModal('addMenuItemModal')">×</button>
+          <div class="form-group"><label>Item Name</label><input id="addMenuName"></div>
+          <div class="form-group"><label>Category</label><select id="addMenuCategory"></select></div>
+          <div class="form-group"><label>Price (₹)</label><input id="addMenuPrice" type="number"></div>
+          <div class="form-group"><label>Half Price (₹) — optional</label><input id="addMenuHalfPrice" type="number"></div>
+          <div class="form-group"><label>Kitchen Station</label>
+            <select id="addMenuStation">
+              <option value="Chinese">Chinese</option>
+              <option value="Indian">Indian</option>
+              <option value="Tandoor">Tandoor</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Main">Main</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="Billing.addMenuItem()">➕ Add to Menu</button>
+        </div>
+      </div>
+
+      <!-- Settle Modal -->
+      <div class="modal-overlay" id="settleModal">
+        <div class="modal">
+          <h3>✅ Settle Bill</h3>
+          <button class="close-btn" onclick="closeModal('settleModal')">×</button>
+          <div id="settleSummary" style="font-size:13px;margin-bottom:10px;"></div>
+          <div class="form-row-3">
+            <div class="form-group"><label>Cash (₹)</label><input id="settleCash" type="number" value="0" oninput="Billing.updateSettleSplit()"></div>
+            <div class="form-group"><label>UPI (₹)</label><input id="settleUPI" type="number" value="0" oninput="Billing.updateSettleSplit()"></div>
+            <div class="form-group"><label>Card (₹)</label><input id="settleCard" type="number" value="0" oninput="Billing.updateSettleSplit()"></div>
+          </div>
+          <div id="settleDiff" style="font-size:12px;color:var(--primary);margin:8px 0;"></div>
+          <button class="btn btn-green w-full" onclick="Billing.confirmSettle()">✅ Confirm Settle</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KDS ===== -->
+    <div class="tab-content" id="tab-kds">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+        <h3>🍳 Kitchen Display System</h3>
+        <div>
+          <select id="kdsStationFilter" onchange="KDS.renderKDS()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;">
+            <option value="All">All Stations</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Indian">Indian</option>
+            <option value="Tandoor">Tandoor</option>
+            <option value="Beverages">Beverages</option>
+          </select>
+          <button class="btn btn-sm btn-primary" onclick="KDS.renderKDS()">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="kds-grid" id="kdsGrid">No active KOTs</div>
+    </div>
+
+    <!-- ===== TABLES ===== -->
+    <div class="tab-content" id="tab-tables">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <h3>🪑 Table Management</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select id="tableAreaFilter" onchange="Tables.renderTables()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;">
+            <option value="All">All Areas</option>
+            <option value="Ground Floor">Ground Floor</option>
+            <option value="First Floor">First Floor</option>
+          </select>
+          <button class="btn btn-sm btn-primary" onclick="Tables.renderTables()">🔄 Refresh</button>
+          <button class="btn btn-sm btn-outline" onclick="Tables.showMergeModal()">🔄 Merge</button>
+        </div>
+      </div>
+      <div class="tables-grid" id="tablesGrid">Loading...</div>
+      <!-- Table Modal -->
+      <div class="modal-overlay" id="tableModal">
+        <div class="modal">
+          <h3>Table Actions</h3>
+          <button class="close-btn" onclick="closeModal('tableModal')">×</button>
+          <div id="tableModalContent"></div>
+        </div>
+      </div>
+      <!-- Merge Modal -->
+      <div class="modal-overlay" id="mergeModal">
+        <div class="modal">
+          <h3>Merge Tables</h3>
+          <button class="close-btn" onclick="closeModal('mergeModal')">×</button>
+          <div class="form-group"><label>Table 1</label><select id="mergeTable1"></select></div>
+          <div class="form-group"><label>Table 2</label><select id="mergeTable2"></select></div>
+          <button class="btn btn-primary" onclick="Tables.confirmMerge()">Confirm Merge</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INVENTORY ===== -->
+    <div class="tab-content" id="tab-inventory">
+      <div class="card">
+        <h3>➕ Add / Update Inventory</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Item Name</label><input id="invItem"></div>
+          <div class="form-group"><label>Stock</label><input id="invStock" type="number"></div>
+          <div class="form-group"><label>Unit</label>
+            <select id="invUnit"><option value="kg">kg</option><option value="g">g</option><option value="L">L</option><option value="ml">ml</option><option value="pcs">pcs</option><option value="boxes">boxes</option><option value="bags">bags</option></select>
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Min Level (Alert Below)</label><input id="invMin" type="number"></div>
+          <div class="form-group"><label>Category</label>
+            <select id="invCategory">
+              <option value="Raw Materials">Raw Materials</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Packaging">Packaging</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Quick Stock Update (Set)</label><input id="invUpdateQty" type="number" placeholder="+10 or -5"><button class="btn btn-sm btn-primary" style="margin-top:6px;" onclick="Inventory.quickUpdate()">Set</button></div>
+        </div>
+        <button class="btn btn-primary" onclick="Inventory.addInventory()">➕ Add Item</button>
+        <button class="btn btn-danger btn-sm" onclick="Inventory.showWastageModal()">🗑️ Wastage</button>
+      </div>
+      <div class="card">
+        <h3>📦 Inventory Levels</h3>
+        <div class="table-wrap"><table><thead><tr><th>Item</th><th>Stock</th><th>Unit</th><th>Min Level</th><th>Category</th><th>Status</th><th>Last Updated</th></tr></thead><tbody id="inventoryTable"><tr><td colspan="7" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>🧠 Smart Stock Dashboard</h3>
+        <div class="stock-grid" id="smartStockGrid">Loading...</div>
+      </div>
+      <div class="card">
+        <h3>🔥 Top Consumed (Last 7 Days)</h3>
+        <div id="topConsumedList">Loading...</div>
+      </div>
+      <div class="card">
+        <h3>📦 Delivery Log</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input id="deliveryDate" type="date"></div>
+          <div class="form-group"><label>Vendor</label><input id="deliveryVendor"></div>
+          <div class="form-group"><label>Item</label><input id="deliveryItem"></div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Qty</label><input id="deliveryQty" type="number"></div>
+          <div class="form-group"><label>Unit</label>
+            <select id="deliveryUnit"><option value="kg">kg</option><option value="g">g</option><option value="L">L</option><option value="ml">ml</option><option value="pcs">pcs</option><option value="boxes">boxes</option></select>
+          </div>
+          <div class="form-group"><label>Invoice #</label><input id="deliveryInvoice"></div>
+        </div>
+        <div class="form-group"><label>Amount (₹)</label><input id="deliveryAmount" type="number"></div>
+        <button class="btn btn-primary" onclick="Inventory.logDelivery()">📦 Log Delivery</button>
+      </div>
+      <div class="card">
+        <h3>📖 Recipe Editor</h3>
+        <div class="form-group"><label>Dish</label><select id="recipeDishSelect" onchange="Inventory.loadRecipe()"></select></div>
+        <div id="recipeIngredientsList"></div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Ingredient</label><input id="recipeIngredient"></div>
+          <div class="form-group"><label>Qty</label><input id="recipeFullQty" type="number"></div>
+          <div class="form-group"><label>Unit</label>
+            <select id="recipeUnit"><option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="L">L</option><option value="pcs">pcs</option></select>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-primary" onclick="Inventory.addRecipeIngredient()">➕ Add Ingredient</button>
+        <button class="btn btn-green" style="margin-left:8px;" onclick="Inventory.saveRecipe()">💾 Save Recipe</button>
+      </div>
+      <div class="card">
+        <h3>📋 Deduction Log</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>KOT</th><th>Dish</th><th>Ingredient</th><th>Qty Deducted</th></tr></thead><tbody id="deductionLogTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Wastage Modal -->
+      <div class="modal-overlay" id="wastageModal">
+        <div class="modal">
+          <h3>🗑️ Log Wastage</h3>
+          <button class="close-btn" onclick="closeModal('wastageModal')">×</button>
+          <div class="form-group"><label>Item</label><select id="wastageItem"></select></div>
+          <div class="form-group"><label>Qty Wasted</label><input id="wastageQty" type="number"></div>
+          <div class="form-group"><label>Reason</label><input id="wastageReason" placeholder="Spoiled / Expired / Dropped"></div>
+          <button class="btn btn-danger" onclick="Inventory.saveWastage()">Log Wastage</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VENDORS ===== -->
+    <div class="tab-content" id="tab-vendors">
+      <div class="card">
+        <h3>➕ Add Vendor</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Vendor Name</label><input id="vendorName"></div>
+          <div class="form-group"><label>Category</label>
+            <select id="vendorCategory">
+              <option value="Raw Materials">Raw Materials</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Packaging">Packaging</option>
+              <option value="Gas">Gas</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Phone</label><input id="vendorPhone" type="tel"></div>
+        <button class="btn btn-primary" onclick="Vendors.addVendor()">➕ Add Vendor</button>
+      </div>
+      <div class="card">
+        <h3>📋 Vendor List</h3>
+        <div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>Phone</th><th>Outstanding</th><th>Action</th></tr></thead><tbody id="vendorTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ===== SALES ===== -->
+    <div class="tab-content" id="tab-sales">
+      <!-- Daily Sales -->
+      <div class="card">
+        <h3>➕ Add Daily Sale</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input id="saleDate" type="date"></div>
+          <div class="form-group"><label>Total Sales (₹)</label><input id="saleTotal" type="number"></div>
+          <div class="form-group"><label>Orders Count</label><input id="saleOrders" type="number"></div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Cash (₹)</label><input id="saleCash" type="number"></div>
+          <div class="form-group"><label>UPI (₹)</label><input id="saleUPI" type="number"></div>
+          <div class="form-group"><label>Card (₹)</label><input id="saleCard" type="number"></div>
+        </div>
+        <div class="form-group"><label>Notes</label><textarea id="saleNotes"></textarea></div>
+        <button class="btn btn-primary" onclick="Sales.addSale()">💾 Save Sale</button>
+      </div>
+      <div class="card">
+        <h3>📋 Sales History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Total</th><th>Cash</th><th>UPI</th><th>Card</th><th>Orders</th><th>By</th></tr></thead><tbody id="salesTable"><tr><td colspan="7" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Targets -->
+      <div class="card">
+        <h3>🎯 Set Target</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Type</label>
+            <select id="targetType"><option value="Daily">Daily</option><option value="Weekly">Weekly</option><option value="Monthly">Monthly</option></select>
+          </div>
+          <div class="form-group"><label>Date</label><input id="targetDate" type="date"></div>
+          <div class="form-group"><label>Target (₹)</label><input id="targetAmount" type="number"></div>
+        </div>
+        <div class="form-group"><label>Notes</label><input id="targetNotes"></div>
+        <button class="btn btn-gold" onclick="Sales.setTarget()">🎯 Set Target</button>
+      </div>
+      <div class="card">
+        <h3>📋 Target Progress</h3>
+        <div class="table-wrap"><table><thead><tr><th>Type</th><th>Date</th><th>Target</th><th>Achieved</th><th>Progress</th><th>Status</th></tr></thead><tbody id="targetsTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Dish Cost -->
+      <div class="card">
+        <h3>🍽️ Dish Cost Management</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Dish Name</label><select id="dishName"></select></div>
+          <div class="form-group"><label>Category</label><select id="dishCategory"></select></div>
+          <div class="form-group"><label>Cost Price (₹)</label><input id="dishCost" type="number"></div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Sell Price Full (₹)</label><input id="dishSellFull" type="number"></div>
+          <div class="form-group"><label>Sell Price Half (₹)</label><input id="dishSellHalf" type="number"></div>
+          <div class="form-group"><label>Quick Log Sale</label>
+            <div class="form-row"><input id="dishSaleQty" type="number" placeholder="Qty" style="flex:1;"><button class="btn btn-sm btn-primary" style="flex:1;" onclick="Sales.logDishSale()">Log</button></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="Sales.saveDish()">💾 Save Dish</button>
+      </div>
+      <div class="card">
+        <h3>📋 Dish Profitability</h3>
+        <div class="table-wrap"><table><thead><tr><th>Dish</th><th>Category</th><th>Cost</th><th>Sell (Full)</th><th>Sell (Half)</th><th>Margin</th></tr></thead><tbody id="dishesTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Money Received -->
+      <div class="card">
+        <h3>➕ Money Received</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input id="moneyDate" type="date"></div>
+          <div class="form-group"><label>Source</label><input id="moneySource"></div>
+          <div class="form-group"><label>Amount (₹)</label><input id="moneyAmount" type="number"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Mode</label>
+            <select id="moneyMode"><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Card">Card</option><option value="Bank Transfer">Bank Transfer</option></select>
+          </div>
+          <div class="form-group"><label>Notes</label><input id="moneyNotes"></div>
+        </div>
+        <button class="btn btn-primary" onclick="Sales.addMoneyReceived()">💾 Save</button>
+      </div>
+      <div class="card">
+        <h3>📋 Money Received History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Source</th><th>Amount</th><th>Mode</th><th>Notes</th></tr></thead><tbody id="moneyReceivedTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Reconciliation -->
+      <div class="card">
+        <h3>⚖️ Cash Reconciliation</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Date</label><input id="reconDate" type="date"></div>
+          <div class="form-group"><label>Expected Cash (₹)</label><input id="reconExpected" type="number"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Actual Cash (₹)</label><input id="reconActual" type="number" oninput="Sales.calcReconDiff()"></div>
+          <div class="form-group"><label>Notes</label><input id="reconNotes"></div>
+        </div>
+        <div id="reconDiffDisplay" style="font-size:13px;font-weight:600;margin-bottom:8px;"></div>
+        <button class="btn btn-primary" onclick="Sales.saveRecon()">💾 Save</button>
+      </div>
+      <div class="card">
+        <h3>📋 Reconciliation History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Expected</th><th>Actual</th><th>Difference</th><th>Notes</th></tr></thead><tbody id="reconTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- AI Predictions -->
+      <div class="card">
+        <h3>🤖 Gemini 2.0 Flash — Sales Predictions</h3>
+        <div id="aiPredictions" style="font-size:12px;color:var(--gray);">Loading AI predictions...</div>
+      </div>
+    </div>
+
+    <!-- ===== EXPENSES ===== -->
+    <div class="tab-content" id="tab-expenses">
+      <div class="card">
+        <h3>➕ Add Expense</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input id="expDate" type="date"></div>
+          <div class="form-group"><label>Category</label>
+            <select id="expCategory">
+              <option value="Raw Materials">Raw Materials</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Packaging">Packaging</option>
+              <option value="Gas">Gas</option>
+              <option value="Salary">Salary</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Amount (₹)</label><input id="expAmount" type="number"></div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Description</label><input id="expDesc"></div>
+          <div class="form-group"><label>Vendor</label><input id="expVendor"></div>
+          <div class="form-group"><label>Payment Mode</label>
+            <select id="expMode"><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Card">Card</option><option value="Credit">Credit</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="Expenses.addExpense()">💾 Save Expense</button>
+      </div>
+      <div class="card">
+        <h3>📋 Expense History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Description</th><th>Vendor</th><th>Mode</th><th>By</th></tr></thead><tbody id="expensesTable"><tr><td colspan="7" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>💸 Today's Expense Split</h3>
+        <div id="expenseSplitTab" style="height:180px;background:#f8f9fa;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gray);">Loading...</div>
+      </div>
+    </div>
+
+    <!-- ===== STAFF ===== -->
+    <div class="tab-content" id="tab-staff">
+      <div class="card">
+        <h3>➕ Add Staff</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Name</label><input id="staffName"></div>
+          <div class="form-group"><label>Phone</label><input id="staffPhone" type="tel"></div>
+          <div class="form-group"><label>Role</label>
+            <select id="staffRole">
+              <option value="Chef">Chef</option><option value="Helper">Helper</option><option value="Waiter">Waiter</option>
+              <option value="Captain">Captain</option><option value="Cleaner">Cleaner</option><option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Monthly Salary (₹)</label><input id="staffSalary" type="number"></div>
+          <div class="form-group"><label>Address</label><input id="staffAddress"></div>
+          <div class="form-group"><label>Joining Date</label><input id="staffJoinDate" type="date"></div>
+        </div>
+        <button class="btn btn-primary" onclick="Staff.addStaff()">➕ Add Staff</button>
+      </div>
+      <div class="card">
+        <h3>👥 Staff List</h3>
+        <div class="table-wrap"><table><thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Salary</th><th>Joined</th></tr></thead><tbody id="staffTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>📅 Mark Attendance</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Select Staff</label><select id="attendanceStaff"></select></div>
+          <div style="display:flex;gap:8px;align-items:flex-end;padding-bottom:2px;">
+            <button class="btn btn-green" onclick="Staff.checkIn()">✅ Check In</button>
+            <button class="btn btn-danger" onclick="Staff.checkOut()">🔴 Check Out</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📋 Attendance History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Staff</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th></tr></thead><tbody id="attendanceTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>💰 Record Payment</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Staff</label><select id="paymentStaff"></select></div>
+          <div class="form-group"><label>Type</label>
+            <select id="paymentType"><option value="Salary">Salary</option><option value="Advance">Advance</option><option value="Bonus">Bonus</option><option value="Deduction">Deduction</option></select>
+          </div>
+          <div class="form-group"><label>Amount (₹)</label><input id="paymentAmount" type="number"></div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group"><label>Date</label><input id="paymentDate" type="date"></div>
+          <div class="form-group"><label>Month</label><input id="paymentMonth" placeholder="e.g. May 2026"></div>
+          <div class="form-group"><label>Note</label><input id="paymentNote"></div>
+        </div>
+        <button class="btn btn-primary" onclick="Staff.recordPayment()">💾 Record Payment</button>
+      </div>
+      <div class="card">
+        <h3>📋 Payment History</h3>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Staff</th><th>Type</th><th>Amount</th><th>Month</th><th>Note</th></tr></thead><tbody id="paymentTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ===== TASKS ===== -->
+    <div class="tab-content" id="tab-tasks">
+      <div class="card">
+        <h3>➕ Add Task</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Task</label><input id="taskText"></div>
+          <div class="form-group"><label>Priority</label>
+            <select id="taskPriority"><option value="Low">Low</option><option value="Medium">Medium</option><option value="High">High</option><option value="Urgent">Urgent</option></select>
+          </div>
+          <div class="form-group"><label>Assign To</label><select id="taskAssign"><option value="Unassigned">Unassigned</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Due Date</label><input id="taskDue" type="date"></div>
+          <div class="form-group"><label>Notes</label><input id="taskNotes"></div>
+        </div>
+        <button class="btn btn-primary" onclick="Tasks.addTask()">➕ Add Task</button>
+      </div>
+      <div class="card">
+        <h3>📋 Tasks</h3>
+        <div class="table-wrap"><table><thead><tr><th>Task</th><th>Priority</th><th>Assigned</th><th>Status</th><th>Due</th><th>Action</th></tr></thead><tbody id="tasksTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="tab-content" id="tab-content">
+      <div class="card">
+        <h3>💡 Content Ideas</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Idea</label><input id="contentIdea"></div>
+          <div class="form-group"><label>Platform</label>
+            <select id="contentPlatform"><option value="Instagram">Instagram</option><option value="WhatsApp">WhatsApp</option><option value="Facebook">Facebook</option><option value="YouTube">YouTube</option></select>
+          </div>
+          <div class="form-group"><label>Category</label>
+            <select id="contentCategory"><option value="Food">Food</option><option value="Promotion">Promotion</option><option value="Behind Scenes">Behind Scenes</option><option value="Customer">Customer</option><option value="General">General</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="Content.saveIdea()">💾 Save</button>
+        <button class="btn btn-gold" onclick="Content.generateAIidea()">🤖 AI Generate</button>
+      </div>
+      <div class="card">
+        <h3>📋 Saved Ideas</h3>
+        <div class="table-wrap"><table><thead><tr><th>Idea</th><th>Platform</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody id="contentTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ===== CUSTOMERS ===== -->
+    <div class="tab-content" id="tab-customers">
+      <div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <select id="customerPlatformFilter" onchange="Customers.renderCustomers()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;">
+          <option value="All">All Platforms</option>
+          <option value="Takeaway">Takeaway</option>
+          <option value="Delivery">Delivery</option>
+          <option value="Zomato">Zomato</option>
+          <option value="Swiggy">Swiggy</option>
+          <option value="Dine-in">Dine-in</option>
+        </select>
+        <input id="customerSearchBox" placeholder="Search customers..." oninput="Customers.renderCustomers()" style="padding:6px 10px;border-radius:6px;border:2px solid #eee;font-size:12px;flex:1;">
+        <button class="btn btn-sm btn-primary" onclick="document.getElementById('addCustomerModal').classList.add('active')">➕ Add Customer</button>
+      </div>
+      <div class="card">
+        <h3>👤 Customer Database</h3>
+        <div id="customerStats" style="font-size:12px;color:var(--gray);margin-bottom:8px;"></div>
+        <div class="table-wrap"><table><thead><tr><th>Name</th><th>Phone</th><th>Address</th><th>Platform</th><th>Orders</th><th>Total Spend</th><th>Last Order</th><th>Action</th></tr></thead><tbody id="customersTable"><tr><td colspan="8" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <!-- Add Customer Modal -->
+      <div class="modal-overlay" id="addCustomerModal">
+        <div class="modal">
+          <h3>➕ Add Customer</h3>
+          <button class="close-btn" onclick="closeModal('addCustomerModal')">×</button>
+          <div class="form-group"><label>Name</label><input id="custModalName"></div>
+          <div class="form-group"><label>Phone</label><input id="custModalPhone" type="tel"></div>
+          <div class="form-group"><label>Email</label><input id="custModalEmail"></div>
+          <div class="form-group"><label>Address</label><textarea id="custModalAddress"></textarea></div>
+          <div class="form-group"><label>Area</label><input id="custModalArea"></div>
+          <div class="form-group"><label>Platform</label>
+            <select id="custModalPlatform"><option value="Dine-in">Dine-in</option><option value="Takeaway">Takeaway</option><option value="Delivery">Delivery</option><option value="Zomato">Zomato</option><option value="Swiggy">Swiggy</option></select>
+          </div>
+          <div class="form-group"><label>Notes</label><input id="custModalNotes"></div>
+          <button class="btn btn-primary" onclick="Customers.addCustomerModal()">💾 Save Customer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AI CHAT ===== -->
+    <div class="tab-content" id="tab-ai-chat">
+      <div class="card">
+        <h3>💬 Gemini AI Business Assistant</h3>
+        <p style="font-size:11px;color:var(--gray);margin-bottom:8px;">Powered by Gemini 2.0 Flash — Ask anything about your business!</p>
+        <div id="chatMessages" style="max-height:60vh;overflow-y:auto;padding:10px;background:#f8f9fa;border-radius:8px;margin-bottom:10px;">
+          <div class="chat-bubble-ai"><span>Hello! Ask me about sales, stock, or tips for your restaurant.</span></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input id="chatInput" placeholder="Ask anything..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #eee;" onkeydown="if(event.key==='Enter')AIChat.sendChat()">
+          <button class="btn btn-primary" onclick="AIChat.sendChat()">🚀 Send</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-outline" onclick="AIChat.quickAsk('What are today\'s sales?')">📊 Today</button>
+          <button class="btn btn-sm btn-outline" onclick="AIChat.quickAsk('What is low on stock?')">📦 Low Stock</button>
+          <button class="btn btn-sm btn-outline" onclick="AIChat.quickAsk('How to increase profit?')">💰 Profit</button>
+          <button class="btn btn-sm btn-outline" onclick="AIChat.quickAsk('Give me 3 content ideas')">💡 Tips</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="tab-content" id="tab-reports">
+      <div class="card">
+        <h3>📧 Email Notification Settings</h3>
+        <div class="form-group"><label>Admin Email Address</label><input id="adminEmail" placeholder="admin@example.com"></div>
+        <button class="btn btn-primary" onclick="Reports.saveSetting('adminEmail', document.getElementById('adminEmail').value)">💾 Save Email</button>
+        <div id="emailStatus" style="margin-top:8px;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <div class="report-action-card">
+          <div class="icon">📊</div>
+          <h4>Send Daily Report</h4>
+          <p>Today's sales, expenses, profit & stock summary</p>
+          <button class="btn btn-primary btn-sm" onclick="Reports.sendReport('daily', document.getElementById('adminEmail').value)">📨 Send Now</button>
+        </div>
+        <div class="report-action-card">
+          <div class="icon">📈</div>
+          <h4>Send Weekly Report</h4>
+          <p>Last 7 days analysis with day-wise breakdown</p>
+          <button class="btn btn-primary btn-sm" onclick="Reports.sendReport('weekly', document.getElementById('adminEmail').value)">📨 Send Now</button>
+        </div>
+        <div class="report-action-card">
+          <div class="icon">⚠️</div>
+          <h4>Low Stock Alert</h4>
+          <p>Immediate alert for items below minimum level</p>
+          <button class="btn btn-gold btn-sm" onclick="Reports.sendReport('low-stock', document.getElementById('adminEmail').value)">🔔 Send Alert</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h3>⚙️ Auto Reports Active?</h3>
+        <p style="font-size:12px;color:var(--gray);">Run setupTriggers() in Apps Script editor to enable:</p>
+        <div style="font-size:12px;margin-top:6px;">
+          <div>✅ Daily: 10PM IST</div>
+          <div>✅ Weekly: Sunday 8PM</div>
+          <div>✅ Low Stock: Every 4hrs</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>📋 Reports Sent Log</h3>
+        <div class="table-wrap"><table><thead><tr><th>Time</th><th>Type</th><th>Date</th><th>Sent To</th><th>Status</th></tr></thead><tbody id="reportsLogTable"><tr><td colspan="5" style="text-align:center;color:var(--gray);">No reports yet</td></tr></tbody></table></div>
+      </div>
+      <div id="reportResult" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="tab-content" id="tab-settings">
+      <div class="card">
+        <h3>🏪 Restaurant Info — Printed on every bill</h3>
+        <div class="form-group"><label>Restaurant Name</label><input id="restName"></div>
+        <div class="form-group"><label>Tagline</label><input id="restTagline"></div>
+        <div class="form-group"><label>Phone Number</label><input id="restPhone"></div>
+        <div class="form-group"><label>Address Line 1</label><input id="restAddr1"></div>
+        <div class="form-group"><label>Address Line 2</label><input id="restAddr2"></div>
+        <div class="form-group"><label>GSTIN (optional)</label><input id="restGstin"></div>
+        <div class="form-group"><label>UPI ID (for QR code, e.g. merchant@upi)</label><input id="restUpi"></div>
+        <div class="form-group"><label>Thank You Message</label><input id="restThanks"></div>
+        <button class="btn btn-primary" onclick="Settings.saveRestaurantInfo()">💾 Save Restaurant Info</button>
+      </div>
+      <div class="card">
+        <h3>👤 User Management</h3>
+        <div class="form-row-3">
+          <div class="form-group"><label>Username</label><input id="addUserUsername"></div>
+          <div class="form-group"><label>Full Name</label><input id="addUserFullName"></div>
+          <div class="form-group"><label>4-Digit PIN</label><input id="addUserPin" type="tel" maxlength="4" placeholder="****"></div>
+        </div>
+        <div class="form-group"><label>Role</label>
+          <select id="addUserRole">
+            <option value="Owner">Owner</option>
+            <option value="Manager">Manager</option>
+            <option value="Captain">Captain</option>
+            <option value="Staff">Staff</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="Settings.addUser()">➕ Add User</button>
+      </div>
+      <div class="card">
+        <h3>👥 All Users</h3>
+        <div class="table-wrap"><table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>PIN</th><th>Created By</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="6" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>🔍 Audit Log</h3>
+        <div class="table-wrap"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Role</th></tr></thead><tbody id="auditTable"><tr><td colspan="4" style="text-align:center;color:var(--gray);">Loading...</td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <h3>🖨️ Bluetooth Printer</h3>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:10px;">Pair a thermal printer for instant KOT/Bill printing.</p>
+        <button class="btn btn-primary" onclick="scanPrinter()">🔍 Scan Printers</button>
+        <button class="btn btn-gold" onclick="testPrint()">🧪 Test Print</button>
+        <div id="printerStatus" style="margin-top:8px;font-size:12px;"></div>
+      </div>
+      <div class="card">
+        <h3>⚙️ Sync Status</h3>
+        <div id="syncDetail" style="font-size:12px;"></div>
+        <button class="btn btn-blue" onclick="triggerManualSync()">🔄 Force Sync Now</button>
+        <button class="btn btn-outline" onclick="pullFromCloud()">⬇️ Pull from Cloud</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Print area for browser fallback -->
+<div id="printArea" style="display:none;"></div>
+
+<!-- ===== MODULE IMPORTS ===== -->
+<script type="module">
+  import * as App from './js/app.js';
+  import * as Billing from './js/modules/billing.js';
+  import * as KDS from './js/modules/kds.js';
+  import * as Tables from './js/modules/tables.js';
+  import * as Inventory from './js/modules/inventory.js';
+  import * as Vendors from './js/modules/vendors.js';
+  import * as Sales from './js/modules/sales.js';
+  import * as Expenses from './js/modules/expenses.js';
+  import * as Staff from './js/modules/staff.js';
+  import * as Tasks from './js/modules/tasks.js';
+  import * as Content from './js/modules/content.js';
+  import * as Customers from './js/modules/customers.js';
+  import * as AIChat from './js/modules/ai-chat.js';
+  import * as Reports from './js/modules/reports.js';
+  import * as Settings from './js/modules/settings.js';
+  import * as Dashboard from './js/modules/dashboard.js';
+  import { printKOT, printBill, scanAndPair, connectPrinter, testPrintPage } from './js/bluetooth-printer.js';
+  import { triggerBackgroundSync, pullAllFromCloud } from './js/sync-engine.js';
+
+  window.App = App;
+  window.Billing = Billing;
+  window.KDS = KDS;
+  window.Tables = Tables;
+  window.Inventory = Inventory;
+  window.Vendors = Vendors;
+  window.Sales = Sales;
+  window.Expenses = Expenses;
+  window.Staff = Staff;
+  window.Tasks = Tasks;
+  window.Content = Content;
+  window.Customers = Customers;
+  window.AIChat = AIChat;
+  window.Reports = Reports;
+  window.Settings = Settings;
+  window.Dashboard = Dashboard;
+  window.closeModal = App.closeModal;
+
+  window.scanPrinter = async () => {
+    const status = document.getElementById('printerStatus');
+    status.textContent = 'Scanning...';
+    try {
+      const found = await scanAndPair();
+      if (found && found.length) {
+        await connectPrinter(found[0].deviceId);
+        status.innerHTML = `<span style="color:var(--green);">✅ Connected to ${found[0].name || found[0].deviceId}</span>`;
+      } else {
+        status.textContent = 'No printers found. Ensure printer is ON and in pairing mode.';
+      }
+    } catch (e) { status.textContent = 'Error: ' + e.message; }
+  };
+  window.testPrint = async () => {
+    const status = document.getElementById('printerStatus');
+    try { await testPrintPage(); status.textContent = 'Test print sent!'; }
+    catch (e) { status.textContent = 'Print failed: ' + e.message; }
+  };
+  window.triggerManualSync = () => { triggerBackgroundSync(); document.getElementById('syncDetail').textContent = 'Sync triggered...'; };
+  window.pullFromCloud = async () => { await pullAllFromCloud(0); document.getElementById('syncDetail').textContent = 'Pull complete'; };
+</script>
+</body>
+</html>

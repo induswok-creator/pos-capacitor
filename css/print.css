@@ -1,0 +1,25 @@
+/* ===== BROWSER FALLBACK PRINT (A4 / Letter) ===== */
+@media print {
+  body * { visibility: hidden; }
+  #printArea, #printArea * { visibility: visible; }
+  #printArea { position: absolute; left: 0; top: 0; width: 100%; }
+  #topBar, #tabBar, .cart-sidebar, .menu-grid, .btn, .modal-overlay { display: none !important; }
+}
+
+/* ===== THERMAL PRINT PREVIEW (58mm / 80mm simulation) ===== */
+.thermal-preview {
+  background: #fff;
+  border: 1px dashed #ccc;
+  padding: 12px;
+  max-width: 320px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #000;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.thermal-preview .center { text-align: center; display: block; }
+.thermal-preview .bold { font-weight: bold; }
+.thermal-preview .wide { font-size: 14px; }
+.thermal-preview .sep { border-top: 1px dashed #000; margin: 6px 0; }

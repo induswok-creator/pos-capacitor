@@ -1,0 +1,32 @@
+{
+  "appId": "io.github.noamaan.pos",
+  "appName": "Indus Wok POS",
+  "webDir": "dist",
+  "backgroundColor": "#c0392b",
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#c0392b",
+    "hideLogs": false,
+    "permissions": ["BLUETOOTH", "BLUETOOTH_ADMIN", "BLUETOOTH_SCAN", "BLUETOOTH_CONNECT", "ACCESS_FINE_LOCATION"]
+  },
+  "ios": {
+    "backgroundColor": "#c0392b",
+    "contentInset": "always"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": true,
+      "backgroundColor": "#c0392b",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    },
+    "BluetoothLe": {
+      "displayStrings": {
+        "scanning": "Scanning for printers...",
+        "cancel": "Cancel",
+        "unknownDevice": "Unknown printer"
+      }
+    }
+  }
+}

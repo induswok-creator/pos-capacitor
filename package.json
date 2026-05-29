@@ -1,0 +1,29 @@
+{
+  "name": "indus-wok-pos",
+  "version": "5.0.0-ultimate",
+  "description": "The Flavours of Indus Wok — Offline-first Capacitor POS with Bluetooth printing",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static project — just ensure index.html and assets are in place'",
+    "sync": "npx cap sync",
+    "android": "npx cap run android",
+    "android-build": "npx cap build android",
+    "ios": "npx cap run ios",
+    "open-android": "npx cap open android",
+    "lint": "echo 'Add eslint if desired'"
+  },
+  "dependencies": {
+    "@capacitor-community/bluetooth-le": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/network": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "dexie": "^4.0.10"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

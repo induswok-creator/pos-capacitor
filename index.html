@@ -22,26 +22,10 @@
     <div class="login-username-wrap">
       <input id="loginUsername" placeholder="Username" autocomplete="off" autocapitalize="none">
     </div>
-    <div class="pin-dots">
-      <div class="pin-dot" id="pd0"></div>
-      <div class="pin-dot" id="pd1"></div>
-      <div class="pin-dot" id="pd2"></div>
-      <div class="pin-dot" id="pd3"></div>
+    <div class="login-username-wrap">
+      <input id="loginPassword" type="password" placeholder="4-Digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*">
     </div>
-    <div class="pin-pad" id="pinPad">
-      <button class="pin-key" data-key="1">1</button>
-      <button class="pin-key" data-key="2">2</button>
-      <button class="pin-key" data-key="3">3</button>
-      <button class="pin-key" data-key="4">4</button>
-      <button class="pin-key" data-key="5">5</button>
-      <button class="pin-key" data-key="6">6</button>
-      <button class="pin-key" data-key="7">7</button>
-      <button class="pin-key" data-key="8">8</button>
-      <button class="pin-key" data-key="9">9</button>
-      <button class="pin-key clear" data-key="clear">⌫</button>
-      <button class="pin-key" data-key="0">0</button>
-      <button class="pin-key login-btn" data-key="login">→</button>
-    </div>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%;padding:12px;font-size:16px;margin-top:10px;">→ Login</button>
     <div class="login-error" id="loginError"></div>
   </div>
   <div class="login-credit">Made by Noamaan Shaikh</div>

@@ -26,13 +26,16 @@ export async function onTabFocus() {
 }
 
 // ─── MENU ───
+// In js/modules/billing.js
 async function loadMenu() {
-  const res = await api('GET_MENU');
-  menuCache = res.menu || [];
-  customersCache = (await api('GET_CUSTOMERS')).customers || [];
-  ordersCache = (await api('GET_ORDERS')).orders || [];
+  try {
+    const res = await api('GET_MENU');
+    menuCache = res.menu || [];
+    // ... rest of code
+  } catch (e) {
+    console.error("Menu failed to load", e);
+  }
 }
-
 export function renderMenu() {
   const grid = document.getElementById('menuGrid');
   if (!grid) return;
